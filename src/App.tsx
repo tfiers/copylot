@@ -24,66 +24,94 @@ type MouseEventt = MouseEvent | React.MouseEvent
 const toPoint = (e: MouseEventt) =>
   new Point(e.pageX, e.pageY)
 
-type CodeCellState = {
-  isBeingDragged: boolean
-  offset: Point
+type CodeCardProps = {
+  startPosition: Point,
+  honorific: string
 }
 
-class CodeCell extends React.Component<
-  { honorific: string }, CodeCellState> {
+type CodeCardState = {
+  position: Point,
+  size: Point,
+}
 
-  state: CodeCellState = {
-    isBeingDragged: false,
-    offset: new Point(0, 0)
+class CodeCard extends React.Component<CodeCardProps, CodeCardState> {
+
+  static defaultProps = { startPosition: new Point(10, 10) }
+
+  constructor(props: CodeCardProps) {
+    super(props)
+    this.state = {
+      position: props.startPosition,
+      size: new Point(220, 150),
+    }
   }
 
+  isBeingMoved: boolean = false
+  isBeingResized: boolean = false
   prevCursorLoc: Point | null = null
-  // At previous mousemove event.
+  // Mouse location at previous mousemove event.
 
-  constructor(props) {
-    super(props)
+  componentDidMount = () => {
     window.addEventListener("mouseup", this.handleMouseUp)
     window.addEventListener("mousemove", this.handleMouseMove)
   }
 
+  componentWillUnmount = () => {
+    window.removeEventListener("mouseup", this.handleMouseUp)
+    window.removeEventListener("mousemove", this.handleMouseMove)
+  }
+
   render = () => (
-    <div className="inline-block bg-gray-100 border rounded shadow-md"
+    <div className="absolute bg-gray-100 border rounded shadow 
+    min-w-min overflow-hidden"
       style={{
-        transform:
-          `translate(${this.state.offset.x}px, ${this.state.offset.y}px)`,
+        left: this.state.position.x,
+        top: this.state.position.y,
+        width: this.state.size.x,
+        height: this.state.size.y,
+        minHeight: 100
       }}>
       <div className="h-7 bg-gray-300 cursor-move"
-        onMouseDown={this.handleMouseDown}></div>
+        onMouseDown={this.startMove}></div>
       <div className="p-1">
-        <p>write some python, {this.props.honorific}</p>
-        <textarea />
-        <p>
-          {this.state.offset.x}, {this.state.offset.y}, {this.state.isBeingDragged ? "yo" : "no"}
-        </p>
+        <p>Write some python, {this.props.honorific}</p>
+        <textarea className="w-full font-mono my-1" />
       </div>
+      <div className="h-6 w-8 absolute -bottom-1 -right-1 cursor-resize"
+        onMouseDown={this.startResize}></div>
     </div>
   )
 
-  handleMouseDown = (e: MouseEventt) => {
+  startMove = (e: MouseEventt) => {
+    this.isBeingMoved = true
+    this.startDrag(e)
+  }
+
+  startResize = (e: MouseEventt) => {
+    this.isBeingResized = true
+    this.startDrag(e)
+  }
+
+  startDrag = (e: MouseEventt) => {
     e.preventDefault()
     this.prevCursorLoc = toPoint(e)
-    this.setState({ isBeingDragged: true })
   }
 
   handleMouseUp = () => {
-    if (this.state.isBeingDragged) {
-      this.setState({ isBeingDragged: false })
-    }
+    this.isBeingMoved = false
+    this.isBeingResized = false
   }
 
   handleMouseMove = (e: MouseEventt) => {
-    if (this.state.isBeingDragged) {
+    if (this.isBeingMoved || this.isBeingResized) {
       const p0 = this.prevCursorLoc as Point
       const p1 = toPoint(e)
       const diff = p1.subtract(p0)
-      this.setState((state) => (
-        { offset: state.offset.add(diff) }
-      ))
+      if (this.isBeingMoved) {
+        this.setState(state => ({ position: state.position.add(diff) }))
+      } else {
+        this.setState(state => ({ size: state.size.add(diff) }))
+      }
       this.prevCursorLoc = p1
     }
   }
@@ -92,9 +120,9 @@ class CodeCell extends React.Component<
 class App extends React.Component {
   render() {
     return (
-      <div className="p-4">
-        <CodeCell honorific="brother" />
-        <CodeCell honorific="miss" />
+      <div>
+        <CodeCard honorific="brother" />
+        <CodeCard honorific="miss" startPosition={new Point(300, 10)} />
       </div>
     )
   }
