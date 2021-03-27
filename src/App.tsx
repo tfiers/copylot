@@ -8,10 +8,16 @@ class Point {
   ) { }
 
   add = (other: Point) =>
-    new Point(this.x + other.x, this.y + other.y)
+    new Point(
+      this.x + other.x,
+      this.y + other.y
+    )
 
   subtract = (other: Point) =>
-    new Point(this.x - other.x, this.y - other.y)
+    new Point(
+      this.x - other.x,
+      this.y - other.y
+    )
 }
 
 type MouseEventt = MouseEvent | React.MouseEvent
@@ -44,8 +50,8 @@ class CodeCell extends React.Component<
   render = () => (
     <div className="CodeCell"
       style={{
-        left: this.state.offset.x,
-        top: this.state.offset.y
+        transform:
+          `translate(${this.state.offset.x}px, ${this.state.offset.y}px)`,
       }}>
       <div className="handlebar" onMouseDown={this.handleMouseDown}></div>
       <div className="inner">
@@ -64,8 +70,10 @@ class CodeCell extends React.Component<
     this.setState({ isBeingDragged: true })
   }
 
-  handleMouseUp = (e: MouseEventt) => {
-    this.setState({ isBeingDragged: false })
+  handleMouseUp = () => {
+    if (this.state.isBeingDragged) {
+      this.setState({ isBeingDragged: false })
+    }
   }
 
   handleMouseMove = (e: MouseEventt) => {
