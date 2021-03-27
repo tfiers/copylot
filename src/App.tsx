@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 
 class Point {
   constructor(
@@ -48,13 +47,14 @@ class CodeCell extends React.Component<
   }
 
   render = () => (
-    <div className="CodeCell"
+    <div className="inline-block bg-gray-100 border rounded shadow-md"
       style={{
         transform:
           `translate(${this.state.offset.x}px, ${this.state.offset.y}px)`,
       }}>
-      <div className="handlebar" onMouseDown={this.handleMouseDown}></div>
-      <div className="inner">
+      <div className="h-7 bg-gray-300 cursor-move"
+        onMouseDown={this.handleMouseDown}></div>
+      <div className="p-1">
         <p>write some python, {this.props.honorific}</p>
         <textarea />
         <p>
@@ -92,7 +92,7 @@ class CodeCell extends React.Component<
 class App extends React.Component {
   render() {
     return (
-      <div className="App">
+      <div className="p-4">
         <CodeCell honorific="brother" />
         <CodeCell honorific="miss" />
       </div>
