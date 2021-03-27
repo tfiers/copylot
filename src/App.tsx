@@ -43,20 +43,23 @@ class CodeCell extends React.Component<
 
   render = () => (
     <div className="CodeCell"
-      onMouseDown={this.handleMouseDown}
       style={{
         left: this.state.offset.x,
         top: this.state.offset.y
       }}>
-      <p>write some python, {this.props.honorific}</p>
-      <textarea />
-      <p>
-        {this.state.offset.x}, {this.state.offset.y}, {this.state.isBeingDragged ? "yo" : "no"}
-      </p>
+      <div className="handlebar" onMouseDown={this.handleMouseDown}></div>
+      <div className="inner">
+        <p>write some python, {this.props.honorific}</p>
+        <textarea />
+        <p>
+          {this.state.offset.x}, {this.state.offset.y}, {this.state.isBeingDragged ? "yo" : "no"}
+        </p>
+      </div>
     </div>
   )
 
   handleMouseDown = (e: MouseEventt) => {
+    e.preventDefault()
     this.prevCursorLoc = toPoint(e)
     this.setState({ isBeingDragged: true })
   }
