@@ -2,15 +2,22 @@ import React from 'react';
 import './App.css';
 
 class Point {
-  constructor(public x: number, public y: number) { }
+  constructor(
+    public x: number,
+    public y: number,
+  ) { }
+
   add = (other: Point) =>
     new Point(this.x + other.x, this.y + other.y)
+
   subtract = (other: Point) =>
     new Point(this.x - other.x, this.y - other.y)
 }
 
-const toPoint = (e: React.MouseEvent) =>
-  new Point(e.pageY, e.pageY)
+type MouseEventt = MouseEvent | React.MouseEvent
+
+const toPoint = (e: MouseEventt) =>
+  new Point(e.pageX, e.pageY)
 
 type CodeCellState = {
   isBeingDragged: boolean
@@ -25,13 +32,18 @@ class CodeCell extends React.Component<
     offset: new Point(0, 0)
   }
 
-  dragStart: Point | null = null
+  prevCursorLoc: Point | null = null
+  // At previous mousemove event.
+
+  constructor(props) {
+    super(props)
+    window.addEventListener("mouseup", this.handleMouseUp)
+    window.addEventListener("mousemove", this.handleMouseMove)
+  }
 
   render = () => (
     <div className="CodeCell"
       onMouseDown={this.handleMouseDown}
-      onMouseMove={this.handleMouseMove}
-      onMouseUp={this.handleMouseUp}
       style={{
         left: this.state.offset.x,
         top: this.state.offset.y
@@ -39,28 +51,29 @@ class CodeCell extends React.Component<
       <p>write some python, {this.props.honorific}</p>
       <textarea />
       <p>
-        {this.state.offset.x}, {this.state.offset.x}, {this.state.isBeingDragged ? "yo" : "no"}
+        {this.state.offset.x}, {this.state.offset.y}, {this.state.isBeingDragged ? "yo" : "no"}
       </p>
     </div>
   )
 
-  handleMouseDown = (e: React.MouseEvent) => {
-    this.dragStart = toPoint(e)
+  handleMouseDown = (e: MouseEventt) => {
+    this.prevCursorLoc = toPoint(e)
     this.setState({ isBeingDragged: true })
   }
 
-  handleMouseUp = (e: React.MouseEvent) => {
+  handleMouseUp = (e: MouseEventt) => {
     this.setState({ isBeingDragged: false })
   }
 
-  handleMouseMove = (e: React.MouseEvent) => {
+  handleMouseMove = (e: MouseEventt) => {
     if (this.state.isBeingDragged) {
-      const p0 = this.dragStart as Point
+      const p0 = this.prevCursorLoc as Point
       const p1 = toPoint(e)
       const diff = p1.subtract(p0)
       this.setState((state) => (
         { offset: state.offset.add(diff) }
       ))
+      this.prevCursorLoc = p1
     }
   }
 }

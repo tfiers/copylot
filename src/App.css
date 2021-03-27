@@ -3,7 +3,10 @@
 }
 
 .CodeCell {
+    display: inline-block;
+    padding: 0.4rem;
     position: relative;
+    border: 1px solid black;
 }
 
 textarea {
