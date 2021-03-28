@@ -21,22 +21,24 @@ export class PyodideLoader extends React.Component {
 
   t0: number
 
-  componentDidMount = () => {
+  downloadLoader = () => {
     const script = document.createElement('script')
     script.src = "https://cdn.jsdelivr.net/pyodide/v0.17.0a2/full/pyodide.js"
     script.async = true
-    script.onload = this.onload
+    script.onload = this.onLoaderDownloaded
     window.languagePluginUrl =
       "https://cdn.jsdelivr.net/pyodide/v0.17.0a2/full/"
     this.t0 = performance.now()
     document.head.appendChild(script)
   }
 
-  onload = async () => {
+  onLoaderDownloaded = async () => {
     await window.languagePluginLoader
     const timeTaken = (performance.now() - this.t0) / 1000
     this.setState({ text: `Loaded Pyodide (${timeTaken.toFixed(1)} s)` })
   }
+
+  componentDidMount = this.downloadLoader
 
   render = () => (
     <div className="absolute bottom-0 right-0">
