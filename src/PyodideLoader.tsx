@@ -1,12 +1,22 @@
 import React from 'react'
 
-// The pyodide <script> (added below) injects the following names into the global scope (== window). This trick (thanks to https://github.com/iodide-project/pyodide/issues/552#issuecomment-781770000) makes typescript aware of them.
+export interface Pyodide {
+  version: string,
+  runPython: (code: string) => object,
+  // More properties at
+  // https://pyodide.org/en/latest/usage/api/js-api.html#pyodide
+}
+
+// The pyodide loader script injects the following names into the global scope
+// (== window). This trick (thanks to [1]) makes typescript aware of them.
+// [1] https://github.com/iodide-project/pyodide/issues/552#issuecomment-781770000
 declare global {
   interface Window {
     languagePluginUrl: string,
-    // This name is a remnant from the iodide notebook, when pyodide was a language plugin for it.
+    // This name is a remnant from the iodide notebook, when pyodide was a
+    // language plugin for it.
     languagePluginLoader: Promise<undefined>,
-    pyodide: object,
+    pyodide: Pyodide,
   }
 }
 
@@ -15,7 +25,8 @@ declare global {
  * As soon as this is loaded, it starts downloading all the heavy files.
  * We `await` this downloading.
  */
-export class PyodideLoader extends React.Component {
+export class PyodideLoader
+  extends React.Component<{ onLoad: (pyodide: Pyodide) => void }> {
 
   state = { text: "Loading Pyodide…" }
 
@@ -36,6 +47,7 @@ export class PyodideLoader extends React.Component {
     await window.languagePluginLoader
     const timeTaken = (performance.now() - this.t0) / 1000
     this.setState({ text: `Loaded Pyodide (${timeTaken.toFixed(1)} s)` })
+    this.props.onLoad(window.pyodide)
   }
 
   componentDidMount = this.downloadLoader
