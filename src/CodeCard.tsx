@@ -1,28 +1,22 @@
 import React from 'react'
 
-export class Point {
-  constructor(
-    public x: number,
-    public y: number,
-  ) { }
-
-  add = (other: Point) =>
-    new Point(
-      this.x + other.x,
-      this.y + other.y
-    )
-
-  subtract = (other: Point) =>
-    new Point(
-      this.x - other.x,
-      this.y - other.y
-    )
+type Point = {
+  x: number,
+  y: number,
 }
+const add = (p1: Point, p2: Point) => ({
+  x: p1.x + p2.x,
+  y: p1.y + p2.y,
+})
+const subtract = (p1: Point, p2: Point) => ({
+  x: p1.x - p2.x,
+  y: p1.y - p2.y,
+})
 
 type MouseEventt = MouseEvent | React.MouseEvent
 
-const toPoint = (e: MouseEventt) =>
-  new Point(e.pageX, e.pageY)
+const toPoint = (e: MouseEventt): Point =>
+  ({ x: e.pageX, y: e.pageY })
 
 type CodeCardProps = {
   startPosition: Point,
@@ -34,15 +28,16 @@ type CodeCardState = {
   size: Point,
 }
 
-export class CodeCard extends React.Component<CodeCardProps, CodeCardState> {
+export class CodeCard
+  extends React.Component<CodeCardProps, CodeCardState> {
 
-  static defaultProps = { startPosition: new Point(10, 10) }
+  static defaultProps = { startPosition: { x: 10, y: 10 } }
 
   constructor(props: CodeCardProps) {
     super(props)
     this.state = {
       position: props.startPosition,
-      size: new Point(220, 150),
+      size: { x: 220, y: 150 },
     }
   }
 
@@ -106,11 +101,11 @@ export class CodeCard extends React.Component<CodeCardProps, CodeCardState> {
     if (this.isBeingMoved || this.isBeingResized) {
       const p0 = this.prevCursorLoc as Point
       const p1 = toPoint(e)
-      const diff = p1.subtract(p0)
+      const diff = subtract(p1, p0)
       if (this.isBeingMoved) {
-        this.setState(state => ({ position: state.position.add(diff) }))
+        this.setState(state => ({ position: add(state.position, diff) }))
       } else {
-        this.setState(state => ({ size: state.size.add(diff) }))
+        this.setState(state => ({ size: add(state.size, diff) }))
       }
       this.prevCursorLoc = p1
     }
