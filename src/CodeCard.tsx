@@ -57,7 +57,7 @@ export class CodeCard
   }
 
   render = () => (
-    <div className="absolute bg-gray-100 border rounded shadow 
+    <div className="absolute bg-gray-300 border rounded shadow 
     min-w-min overflow-hidden"
       style={{
         left: this.state.position.x,
@@ -66,9 +66,9 @@ export class CodeCard
         height: this.state.size.y,
         minHeight: 100
       }}>
-      <div className="h-7 bg-gray-300 cursor-move"
+      <div className="h-7 cursor-move"
         onMouseDown={this.startMove}></div>
-      <div className="p-1">
+      <div className="p-1 bg-gray-100 h-full">
         <p>Write some python, {this.props.honorific}</p>
         <textarea className="w-full font-mono my-1" />
       </div>
