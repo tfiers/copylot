@@ -52,29 +52,33 @@ export class Card
         height: this.state.size.y,
         minHeight: 100
       }}>
-      <div className="h-7 cursor-move"
-        onMouseDown={this.startMove}></div>
+
+      <div onMouseDown={this.startMove}
+        className="h-7 cursor-move" />
+
       <div className="p-1 bg-gray-100 h-full">
         {this.props.children}
       </div>
-      <div className="h-6 w-8 absolute -bottom-1 -right-1 cursor-resize"
-        onMouseDown={this.startResize}></div>
+
+      <div onMouseDown={this.startResize}
+        className="h-6 w-8 absolute -bottom-1 -right-1 cursor-resize" />
+
     </div>
   )
 
-  startMove = (e: MouseEventt) => {
+  startMove = (event: MouseEventt) => {
     this.isBeingMoved = true
-    this.startDrag(e)
+    this.startDrag(event)
   }
 
-  startResize = (e: MouseEventt) => {
+  startResize = (event: MouseEventt) => {
     this.isBeingResized = true
-    this.startDrag(e)
+    this.startDrag(event)
   }
 
-  startDrag = (e: MouseEventt) => {
-    e.preventDefault()
-    this.prevCursorLoc = toPoint(e)
+  startDrag = (event: MouseEventt) => {
+    event.preventDefault()
+    this.prevCursorLoc = toPoint(event)
   }
 
   handleMouseUp = () => {
@@ -82,10 +86,10 @@ export class Card
     this.isBeingResized = false
   }
 
-  handleMouseMove = (e: MouseEventt) => {
+  handleMouseMove = (event: MouseEventt) => {
     if (this.isBeingMoved || this.isBeingResized) {
       const p0 = this.prevCursorLoc as Point
-      const p1 = toPoint(e)
+      const p1 = toPoint(event)
       const diff = subtract(p1, p0)
       if (this.isBeingMoved) {
         this.setState(state => ({ position: add(state.position, diff) }))
@@ -112,5 +116,5 @@ const subtract = (p1: Point, p2: Point) => ({
 
 type MouseEventt = MouseEvent | React.MouseEvent
 
-const toPoint = (e: MouseEventt): Point =>
-  ({ x: e.pageX, y: e.pageY })
+const toPoint = (event: MouseEventt): Point =>
+  ({ x: event.pageX, y: event.pageY })
