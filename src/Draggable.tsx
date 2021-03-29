@@ -1,12 +1,14 @@
 import React from 'react'
 
-export interface CardProps {
+export interface DraggableProps {
   startPosition: Point,
 }
 
-export const defaultCardProps = { startPosition: { x: 10, y: 10 } }
+export const defaultDraggableProps = {
+  startPosition: { x: 10, y: 10 },
+}
 
-type CardState = {
+type DraggableState = {
   position: Point,
   size: Point,
 }
@@ -14,12 +16,12 @@ type CardState = {
 /**
  * A moveable and resizeable container.
  */
-export class Card
-  extends React.Component<CardProps, CardState> {
+export class Draggable
+  extends React.Component<DraggableProps, DraggableState> {
 
-  static defaultProps = defaultCardProps
+  static defaultProps = defaultDraggableProps
 
-  constructor(props: CardProps) {
+  constructor(props: DraggableProps) {
     super(props)
     this.state = {
       position: props.startPosition,
@@ -116,5 +118,7 @@ const subtract = (p1: Point, p2: Point) => ({
 
 type MouseEventt = MouseEvent | React.MouseEvent
 
-const toPoint = (event: MouseEventt): Point =>
-  ({ x: event.pageX, y: event.pageY })
+const toPoint = (event: MouseEventt): Point => ({
+  x: event.pageX,
+  y: event.pageY
+})

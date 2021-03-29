@@ -1,8 +1,8 @@
 import React from "react"
-import { Card, CardProps, defaultCardProps } from "./Card";
+import { Draggable, DraggableProps, defaultDraggableProps } from "./Draggable";
 import { Pyodide, PyProxy } from "./Pyodide";
 
-interface CodeCardProps extends CardProps {
+interface CodeCardProps extends DraggableProps {
   honorific: string,
   pyodide?: Pyodide,
 }
@@ -20,17 +20,17 @@ export class CodeCard
     output: undefined,
   }
 
-  static defaultProps = defaultCardProps
+  static defaultProps = defaultDraggableProps
 
   render = () => (
-    <Card startPosition={this.props.startPosition}>
+    <Draggable startPosition={this.props.startPosition}>
       <p>Write some python, {this.props.honorific}</p>
       <textarea
         value={this.state.code}
         onChange={this.onCodeEdit}
         className="w-full font-mono my-1 px-1" />
       <pre>{(this.state.output ?? "").toString()}</pre>
-    </Card>
+    </Draggable>
   )
 
   onCodeEdit = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
