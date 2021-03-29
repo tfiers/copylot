@@ -4,7 +4,7 @@ import { CodeCard } from './CodeCard'
 
 export class App extends React.Component {
 
-  state = { pyodide: null }
+  state = { pyodide: undefined }
 
   render = () => (
     <div>

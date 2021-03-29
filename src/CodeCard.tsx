@@ -4,7 +4,7 @@ import { Pyodide, PyProxy } from "./Pyodide";
 
 interface CodeCardProps extends CardProps {
   honorific: string,
-  pyodide: Pyodide,
+  pyodide?: Pyodide,
 }
 
 type CodeCardState = {
@@ -17,7 +17,7 @@ export class CodeCard
 
   state = {
     code: "",
-    output: null,
+    output: undefined,
   }
 
   static defaultProps = defaultCardProps
@@ -36,12 +36,14 @@ export class CodeCard
   onCodeEdit = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const code = event.target.value
     this.setState({ code })
-    const pyodide = this.props.pyodide;
-    try {
-      const output = await pyodide.runPythonAsync(code)
-      this.setState({ output })
-    } catch (pythonError) {
-      // ignore
+    const pyodide = this.props.pyodide
+    if (pyodide !== undefined) {
+      try {
+        const output = await pyodide.runPythonAsync(code)
+        this.setState({ output })
+      } catch (pythonError) {
+        // ignore
+      }
     }
   }
 }

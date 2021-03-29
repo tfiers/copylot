@@ -29,7 +29,7 @@ export class Card
 
   isBeingMoved: boolean = false
   isBeingResized: boolean = false
-  prevCursorLoc: Point | null = null
+  prevCursorLoc?: Point
   // Mouse location at previous mousemove event.
 
   componentDidMount = () => {

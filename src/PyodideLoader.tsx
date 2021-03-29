@@ -11,7 +11,7 @@ export class PyodideLoader
 
   state = { text: "Loading Pyodide…" }
 
-  t0: number
+  t0?: number
 
   downloadLoader = () => {
     const script = document.createElement('script')
@@ -26,7 +26,7 @@ export class PyodideLoader
 
   onLoaderDownloaded = async () => {
     await window.languagePluginLoader
-    const timeTaken = (performance.now() - this.t0) / 1000
+    const timeTaken = (performance.now() - (this.t0 as number)) / 1000
     this.setState({ text: `Loaded Pyodide (${timeTaken.toFixed(1)} s)` })
     this.props.onLoad(window.pyodide)
   }
