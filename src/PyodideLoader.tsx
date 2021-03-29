@@ -1,24 +1,5 @@
 import React from 'react'
-
-export interface Pyodide {
-  version: string,
-  runPython: (code: string) => object,
-  // More properties at
-  // https://pyodide.org/en/latest/usage/api/js-api.html#pyodide
-}
-
-// The pyodide loader script injects the following names into the global scope
-// (== window). This trick (thanks to [1]) makes typescript aware of them.
-// [1] https://github.com/iodide-project/pyodide/issues/552#issuecomment-781770000
-declare global {
-  interface Window {
-    languagePluginUrl: string,
-    // This name is a remnant from the iodide notebook, when pyodide was a
-    // language plugin for it.
-    languagePluginLoader: Promise<undefined>,
-    pyodide: Pyodide,
-  }
-}
+import { Pyodide } from './Pyodide'
 
 /**
  * First load the small bootstrap script (pyodide.js).

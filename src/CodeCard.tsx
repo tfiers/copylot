@@ -1,6 +1,6 @@
 import React from "react"
 import { Card, CardProps, defaultCardProps } from "./Card";
-import { Pyodide } from "./PyodideLoader";
+import { Pyodide, PyProxy } from "./Pyodide";
 
 interface CodeCardProps extends CardProps {
   honorific: string,
@@ -9,7 +9,7 @@ interface CodeCardProps extends CardProps {
 
 type CodeCardState = {
   code: string,
-  output: object,
+  output?: PyProxy,
 }
 
 export class CodeCard
@@ -17,7 +17,7 @@ export class CodeCard
 
   state = {
     code: "",
-    output: {},
+    output: null,
   }
 
   static defaultProps = defaultCardProps
@@ -29,17 +29,18 @@ export class CodeCard
         value={this.state.code}
         onChange={this.onCodeEdit}
         className="w-full font-mono my-1 px-1" />
-      <pre>{JSON.stringify(this.state.output)}</pre>
+      <pre>{(this.state.output ?? "").toString()}</pre>
     </Card>
   )
 
-  onCodeEdit = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  onCodeEdit = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const code = event.target.value
     this.setState({ code })
+    const pyodide = this.props.pyodide;
     try {
-      const output = this.props.pyodide.runPython(code)
+      const output = await pyodide.runPythonAsync(code)
       this.setState({ output })
-    } catch (error) {
+    } catch (pythonError) {
       // ignore
     }
   }
